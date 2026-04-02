@@ -1,7 +1,5 @@
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,13 +7,14 @@ import org.junit.runners.Parameterized;
 
 import java.util.List;
 
-import static io.restassured.RestAssured.*;
+import static io.restassured.RestAssured.baseURI;
 import static org.hamcrest.Matchers.notNullValue;
 
 @RunWith(Parameterized.class)
-public class CreateOrderTests {
+public class CreateOrderTests extends BaseTest{
 
     private final List<String> color;
+    private OrderApi orderApi;
 
     public CreateOrderTests(List<String> color) {
         this.color = color;
@@ -33,7 +32,7 @@ public class CreateOrderTests {
 
     @Before
     public void setUp() {
-        baseURI = "https://qa-scooter.praktikum-services.ru";
+        orderApi = new OrderApi();
     }
 
     @Test
@@ -53,20 +52,9 @@ public class CreateOrderTests {
                 color
         );
 
-        Response response = createOrder(order);
-
-        response.then()
+        orderApi.createOrder(order)
+                .then()
                 .statusCode(201)
                 .body("track", notNullValue());
-    }
-
-
-    @Step("Создаём заказ с цветом {order.color}")
-    public Response createOrder(Order order) {
-        return given()
-                .header("Content-type", "application/json")
-                .body(order)
-                .when()
-                .post("/api/v1/orders");
     }
 }

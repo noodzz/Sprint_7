@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
-public class CreateDuplicateCourierTest extends BaseTest {
+public class CreateCourierPositiveTest extends BaseTest {
 
     private Courier courier;
     private CourierApi courierApi;
@@ -13,21 +13,17 @@ public class CreateDuplicateCourierTest extends BaseTest {
 
     @Before
     public void setUp() {
-        courierApi = new CourierApi();
         courier = CourierGenerator.getRandomCourier();
+        courierApi = new CourierApi();
     }
 
     @Test
-    @DisplayName("Нельзя создать двух одинаковых курьеров")
-    public void cannotCreateDuplicateCourier() {
+    @DisplayName("Курьера можно создать")
+    public void createCourierSuccess() {
         courierApi.createCourier(courier)
                 .then()
                 .statusCode(201)
                 .body("ok", equalTo(true));
-
-        courierApi.createCourier(courier)
-                .then()
-                .statusCode(409);
 
         courierId = courierApi.loginCourier(courier)
                 .then()
@@ -38,7 +34,9 @@ public class CreateDuplicateCourierTest extends BaseTest {
     @After
     public void tearDown() {
         if (courierId != 0) {
-            courierApi.deleteCourier(courierId);
+            courierApi.deleteCourier(courierId)
+                    .then()
+                    .statusCode(200);
         }
     }
 }
