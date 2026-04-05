@@ -5,7 +5,7 @@ import static io.restassured.RestAssured.baseURI;
 public class BaseTest {
 
     @Before
-    public void setUp() {
+    public void start() {
         baseURI = "https://qa-scooter.praktikum-services.ru";
     }
 }
